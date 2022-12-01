@@ -513,7 +513,7 @@ class AudioPlayerHandler(BasePlayerHandler):
         try:
             data = plexID.split(':', 1)[-1]
             from plexnet import plexobjects
-            track = plexobjects.PlexObject.deSerialize(base64.urlsafe_b64decode(data.encode('utf-8')))
+            track = plexobjects.PlexObject.deSerialize(base64.urlsafe_b64decode(data[1:].encode('utf-8')))
             track.softReload()
             self.media = track
             pobj = plexplayer.PlexAudioPlayer(track)
@@ -871,7 +871,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.play(plist, startpos=startpos)
 
     def createTrackListItem(self, track, fanart=None, index=0):
-        data = base64.urlsafe_b64encode(track.serialize())
+        data = base64.urlsafe_b64encode(bytearray(track.serialize(), 'utf-8))
         url = 'plugin://script.plex/play?{0}'.format(data)
         li = xbmcgui.ListItem(track.title, path=url)
         li.setInfo('music', {
